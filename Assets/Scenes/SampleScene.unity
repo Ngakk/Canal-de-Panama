@@ -322,9 +322,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20ff852fd94e34f43822d32af6846a4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gatePrefab: {fileID: 0}
-  waterPrefab: {fileID: 0}
-  boatPrefab: {fileID: 0}
+  gatePrefab: {fileID: 300647853744751350, guid: c982a9fb6c19dc94b901981a445a5c4c,
+    type: 3}
+  waterPrefab: {fileID: 6840825948328839451, guid: be13127276f51b74da62c0afe990a8f8,
+    type: 3}
+  boatPrefab: {fileID: 1163117622607586041, guid: c5b0da840b26b2f48ad62d00e735ccea,
+    type: 3}
   NumeroDeCompuertas: 3
   wOffset: 10
   hOffset: 3
@@ -426,7 +429,7 @@ PrefabInstance:
     - target: {fileID: 3431632664400629277, guid: c982a9fb6c19dc94b901981a445a5c4c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 5.56
       objectReference: {fileID: 0}
     - target: {fileID: 3431632664400629277, guid: c982a9fb6c19dc94b901981a445a5c4c,
         type: 3}
