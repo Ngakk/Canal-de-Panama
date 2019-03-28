@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
+public enum WaterState
+{
+    UP,
+    DOWN,
+    CHANGING
+}
 
 public class Water : MonoBehaviour
 {
-    [HideInInspector]
-    public bool isUp = true;
+    //[HideInInspector]
+    public WaterState state = WaterState.DOWN;
     public Gate left, right;
-
-    private bool isChanging;
+    
     public bool canUp, canDown;
 
     // Start is called before the first frame update
@@ -27,32 +31,30 @@ public class Water : MonoBehaviour
 
     public void MoveUp()
     {
-        isChanging = true;
+        state = WaterState.CHANGING;
         LeanTween.move(gameObject, transform.position + Vector3.up * 2.5f, 2.0f).setOnComplete(OnMoveUp);
     }
 
     public void OnMoveUp()
     {
-        isChanging = false;
-        isUp = true;
+        state = WaterState.UP;
     }
 
     public void MoveDown()
     {
-        isChanging = true;
+        state = WaterState.CHANGING;
         LeanTween.move(gameObject, transform.position + Vector3.down * 2.5f, 2.0f).setOnComplete(OnMoveDown);
     }
 
     public void OnMoveDown()
     {
-        isChanging = false;
-        isUp = false;
+        state = WaterState.DOWN;
     }
 
     public void UpRequest()
     {
         CheckIfCanUp();
-        if (!isChanging && canUp)
+        if (canUp)
         {
             MoveUp();
         }
@@ -66,7 +68,7 @@ public class Water : MonoBehaviour
     public void DownRequest()
     {
         CheckIfCanDown();
-        if (canDown && !isChanging)
+        if (canDown)
         {
             MoveDown();
         }
@@ -78,25 +80,25 @@ public class Water : MonoBehaviour
 
     public void CheckIfCanUp()
     {
-        bool leftOpen;
+        bool leftClosed;
 
         if (left == null)
-            leftOpen = false;
+            leftClosed = false;
         else
-            leftOpen = left.isOpen;
+            leftClosed = left.state == GateState.CLOSED;
 
-        canUp = !isUp && !leftOpen;
+        canUp = state == WaterState.DOWN && leftClosed;
     }
 
     public void CheckIfCanDown()
     {
-        bool rightOpen;
+        bool rightClosed;
 
         if (right == null)
-            rightOpen = false;
+            rightClosed = true;
         else
-            rightOpen = right.isOpen;
+            rightClosed = right.state == GateState.CLOSED;
 
-        canDown = isUp && !rightOpen;
+        canDown = state == WaterState.UP && rightClosed;
     }
 }

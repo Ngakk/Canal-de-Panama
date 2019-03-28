@@ -2,15 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum GateState
+{
+    OPEN,
+    CLOSED,
+    CHANGING,
+    CROSSING
+}
+
 public class Gate : MonoBehaviour
 {
-    [HideInInspector]
-    public bool isOpen;
+    //[HideInInspector]
+    public GateState state = GateState.CLOSED;
     public GameObject model;
     public Water left, right;
 
     private bool canOpen = true;
-    private bool isChanging = false;
+    private List<int> boatsCrossing = new List<int>();
 
     public void Start()
     {
@@ -19,58 +27,62 @@ public class Gate : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.O)) Open();
-        if (Input.GetKeyDown(KeyCode.C)) Close();
+        /*if (Input.GetKeyDown(KeyCode.O)) Open();
+        if (Input.GetKeyDown(KeyCode.C)) Close();*/
 
     }
 
     public void Open()
     {
-        if (!isOpen)
+        if (state == GateState.CLOSED)
         {
-            isChanging = true;
+            state = GateState.CHANGING;
             LeanTween.moveLocal(model, new Vector3(0, 0, 10), 2.0f).setOnComplete(OnOpen);
         }
     }
 
     public void OnOpen()
     {
-        isOpen = true;
-        isChanging = false;
+        state = GateState.OPEN;
     }
 
     public void Close()
     {
-        if (isOpen)
+        if (state == GateState.OPEN)
         {
-            isChanging = true;
+            state = GateState.CHANGING;
             LeanTween.moveLocal(model, new Vector3(0, 0, 0), 2.0f).setOnComplete(OnClose);
         }
     }
 
     public void OnClose()
     {
-        isOpen = false;
-        isChanging = false;
+        state = GateState.CLOSED;
     }
 
     private void CheckIfCanOpen()
     {
-        bool leftUp, rightUp;
+        if (state == GateState.CHANGING)
+        {
+            canOpen = false;
+            return;
+        }
+
+        bool leftUp, rightDown;
 
         if (left == null) leftUp = true;
-        else leftUp = left.isUp;
+        else leftUp = left.state == WaterState.UP;
 
-        if (right == null) rightUp = false;
-        else rightUp = right.isUp;
+        if (right == null) rightDown = true;
+        else rightDown = right.state == WaterState.DOWN;
 
-        canOpen = leftUp && !rightUp;
+        canOpen = leftUp && rightDown;
     }
 
     public void OpenRequest()
     {
         CheckIfCanOpen();
-        if (canOpen && !isChanging)
+        if (canOpen)
         {
             Open();
         }
@@ -82,7 +94,7 @@ public class Gate : MonoBehaviour
 
     public void CloseRequest()
     {
-        if (isOpen)
+        if (state == GateState.OPEN && boatsCrossing.Count == 0)
         {
             Close();
         }
@@ -92,5 +104,43 @@ public class Gate : MonoBehaviour
     {
         left?.UpRequest();
         right?.DownRequest();
+    }
+
+    public void CrossingRequest(int _id)
+    {
+        if (!boatsCrossing.Contains(_id))
+        {
+            boatsCrossing.Add(_id);
+            Debug.Log("Adding crossing request with id " + _id + " to " + gameObject.name);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Boat"))
+        {
+            int otherId = other.GetComponentInParent<Boat>().myInstanceId;
+            if (!boatsCrossing.Contains(otherId))
+            {
+                boatsCrossing.Add(otherId);
+                Debug.Log("Adding crossing request with id " + otherId + " to " + gameObject.name);
+            }
+
+            Debug.Log("Boat entered from " + gameObject.name);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Boat"))
+        {
+            int otherId = other.GetComponentInParent<Boat>().myInstanceId;
+            if (boatsCrossing.Contains(otherId))
+            {
+                boatsCrossing.Remove(otherId);
+                Debug.Log("Removing crossing request with id " + otherId + " from " + gameObject.name);
+            }
+            Debug.Log("Boat exited from " + gameObject.name);
+        }
     }
 }

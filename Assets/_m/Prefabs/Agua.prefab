@@ -137,7 +137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ed15793bee069545953882afd45d57b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUp: 1
+  state: 0
   left: {fileID: 0}
   right: {fileID: 0}
   canUp: 0

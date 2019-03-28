@@ -45,8 +45,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e10f76e25dcbdf2499087a100634ea86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isOpen: 0
+  state: 1
   model: {fileID: 8548147369910381713}
+  left: {fileID: 0}
+  right: {fileID: 0}
+  boatCrossing: 0
 --- !u!65 &828788052888634351
 BoxCollider:
   m_ObjectHideFlags: 0
