@@ -25,7 +25,7 @@ public class Boat : MonoBehaviour
     void Update()
     {
         ThrowRaycast();
-
+        /*
         if (Input.GetKeyDown(KeyCode.A))
         {
             Move();
@@ -34,7 +34,7 @@ public class Boat : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S))
         {
             Stop();
-        }
+        }*/
     }
 
     public void ThrowRaycast()
